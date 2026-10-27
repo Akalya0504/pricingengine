@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Product Pricing Form</title>
+
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background: linear-gradient(135deg, #e0e7ff, #f5f3ff);
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 30px 16px;
+            }
+
+            .container {
+                background: white;
+                width: 100%;
+                max-width: 480px;
+                padding: 32px;
+                border-radius: 18px;
+                box-shadow: 0 12px 35px rgba(40, 40, 100, 0.12);
+            }
+
+            h1 {
+                color: #3730a3;
+                text-align: center;
+                margin-top: 0;
+                margin-bottom: 10px;
+            }
+
+            .subtitle {
+                text-align: center;
+                color: #6b7280;
+                margin-bottom: 28px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #374151;
+                font-weight: bold;
+            }
+
+            input {
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 20px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 15px;
+                outline: none;
+            }
+
+            input:focus {
+                border-color: #6366f1;
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            }
+
+            button {
+                width: 100%;
+                padding: 14px;
+                background: #4f46e5;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+
+            button:hover {
+                background: #3730a3;
+            }
+
+            .products-heading {
+                color: #3730a3;
+                margin-top: 30px;
+                margin-bottom: 18px;
+                text-align: center;
+            }
+
+            #productsList {
+                display: grid;
+                gap: 14px;
+            }
+
+            .product-card {
+                background: #f9fafb;
+                border: 1px solid #e0e7ff;
+                border-radius: 12px;
+                padding: 18px;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            .product-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 16px rgba(55, 48, 163, 0.1);
+            }
+
+            .product-card h3 {
+                color: #3730a3;
+                margin: 0 0 12px;
+            }
+
+            .product-card p {
+                color: #4b5563;
+                margin: 8px 0;
+                overflow-wrap: anywhere;
+            }
+
+            .product-card .product-final-price {
+                color: #047857;
+                font-size: 17px;
+                font-weight: bold;
+                border-top: 1px solid #e5e7eb;
+                padding-top: 12px;
+                margin-top: 12px;
+            }
+
+            #refreshProducts {
+                margin-top: 16px;
+            }
+
+
+            #message {
+                margin-top: 20px;
+                text-align: center;
+                color: #047857;
+                font-weight: bold;
+                overflow-wrap: anywhere;
+            }
+
+            .price-preview {
+                background: #eef2ff;
+                padding: 16px;
+                margin-top: 5px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                text-align: center;
+            }
+
+            .price-preview p {
+                color: #6366f1;
+                margin: 0 0 8px;
+            }
+
+            .price-preview h2 {
+                color: #3730a3;
+                margin: 0;
+                font-size: 28px;
+            }
+
+        </style>
+    </head>
+
+</head>
+<body>
+
+<h1>Product Pricing Form</h1>
+
+<div class="container">
+    <h1>Product Pricing Form</h1>
+    <p class="subtitle">Add a product and calculate its final price</p>
+
+<form id="productForm">
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" required>
+    <br><br>
+
+    <label for="sku">SKU:</label>
+    <input type="text" id="sku" required>
+    <br><br>
+
+    <label for="basePrice">Base Price:</label>
+    <input type="number" id="basePrice" min="0.01" step="0.01" required>
+    <br><br>
+
+    <label for="discountPercentage">Discount (%):</label>
+    <input type="number" id="discountPercentage"
+           min="0" max="100" step="0.01" value="0" required>
+    <br><br>
+
+    <button type="submit">Save Product</button>
+</form>
+
+    <div class="price-preview">
+        <p>Final Price</p>
+        <h2 id="finalPrice">₹0.00</h2>
+    </div>
+
+
+    <p id="message"></p>
+
+    <hr>
+
+    <h2 class="products-heading">Saved Products</h2>
+
+    <div id="productsList">
+        Loading products...
+    </div>
+
+    <button type="button" id="refreshProducts">
+        Refresh Products
+    </button>
+
+
+</div>
+<script>
+
+    function updateFinalPrice() {
+        const basePrice = Number(document.getElementById("basePrice").value);
+        const discount = Number(document.getElementById("discountPercentage").value);
+
+        const finalPrice = basePrice * (1 - discount / 100);
+
+        document.getElementById("finalPrice").textContent =
+            "₹" + (finalPrice >= 0 && Number.isFinite(finalPrice)
+                ? finalPrice.toFixed(2)
+                : "0.00");
+    }
+
+    document.getElementById("basePrice").addEventListener("input", updateFinalPrice);
+    document.getElementById("discountPercentage").addEventListener("input", updateFinalPrice);
+
+    document.getElementById("productForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const product = {
+            productName: document.getElementById("productName").value,
+            sku: document.getElementById("sku").value,
+            basePrice: Number(document.getElementById("basePrice").value),
+            discountPercentage: Number(document.getElementById("discountPercentage").value)
+        };
+
+        const message = document.getElementById("message");
+
+        try {
+            const response = await fetch("/api/products", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(product)
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to save product");
+            }
+
+            const savedProduct = await response.json();
+
+            message.textContent =
+                "Product saved! ID: " + savedProduct.id +
+                " | Final Price: " + savedProduct.finalPrice;
+
+            document.getElementById("productForm").reset();
+
+            updateFinalPrice();
+            await loadProducts();
+        } catch (error) {
+            message.textContent =
+                "Could not save product. Please check that Spring Boot is running.";
+        }
+    });
+
+    async function loadProducts() {
+        const productsList = document.getElementById("productsList");
+
+        productsList.textContent = "Loading products...";
+
+        try {
+            const response = await fetch("/api/products");
+
+            if (!response.ok) {
+                throw new Error("Could not load products");
+            }
+
+            const products = await response.json();
+
+            productsList.replaceChildren();
+
+            if (products.length === 0) {
+                productsList.textContent = "No products saved yet.";
+                return;
+            }
+
+            products.forEach(function(product) {
+                const card = document.createElement("div");
+                card.className = "product-card";
+
+                const name = document.createElement("h3");
+                name.textContent = product.productName;
+
+                const sku = document.createElement("p");
+                sku.textContent = "SKU: " + product.sku;
+
+                const basePrice = document.createElement("p");
+                basePrice.textContent =
+                    "Base Price: ₹" + Number(product.basePrice).toFixed(2);
+
+                const discount = document.createElement("p");
+                discount.textContent =
+                    "Discount: " + product.discountPercentage + "%";
+
+                const finalPrice = document.createElement("p");
+                finalPrice.className = "product-final-price";
+                finalPrice.textContent =
+                    "Final Price: ₹" + Number(product.finalPrice).toFixed(2);
+
+                card.append(name, sku, basePrice, discount, finalPrice);
+                productsList.appendChild(card);
+            });
+        } catch (error) {
+            productsList.textContent =
+                "Unable to load products. Check that Spring Boot is running.";
+        }
+    }
+
+    document.getElementById("refreshProducts")
+        .addEventListener("click", loadProducts);
+
+    loadProducts();
+
+</script>
+
+</body>
+</html>
+
+
+</body>
+</html>
